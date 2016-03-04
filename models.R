@@ -6,30 +6,41 @@ library(party)
 library(klaR)
 library(caret)
 
+#raw <- read.csv('Data/merged.csv')
+#raw$student_id<-as.factor(raw$student_id)
+#raw$session<-as.factor(raw$session)
+
+frmla <- raw$points ~ raw$idle_time + raw$mouse_movement + raw$keystroke + 
+  raw$time_delta + raw$left_click + raw$right_click +raw$session 
+
+fit <- rpart(frmla, method="class", data=raw)
+
+tr = tree(frmla, data=raw)
+summary(tr)
+plot(tr); text(tr)
 
 
-
-raw.orig <- read.csv('Data/result.csv')
+# raw.orig <- read.csv('Data/result.csv')
 
 # x <- subset(raw.orig, select=-c(total,Unnamed..0.1))
 # y <- raw.orig$total
 # y<-discretize( y, method='frequency',categories = 5 )
 
 
-model <- train(x,y,'nb',trControl=trainControl(method='cv',number=10))
+# model <- train(x,y,'nb',trControl=trainControl(method='cv',number=10))
 
-frmla <- raw.orig$total ~ raw.orig$idle_time + raw.orig$mouse_movement + raw.orig$keystroke + 
-  raw.orig$time_delta + raw.orig$left_click + raw.orig$right_click 
+# frmla <- raw.orig$total ~ raw.orig$idle_time + raw.orig$mouse_movement + raw.orig$keystroke + 
+  # raw.orig$time_delta + raw.orig$left_click + raw.orig$right_click 
  
-fit <- rpart(frmla, method="class", data=raw.orig)
-printcp(fit)
-plotcp(fit)
-summary(fit)
-plot(fit, uniform=TRUE, main="Classification Tree for Chemicals")
-text(fit, use.n=TRUE, all=TRUE, cex=.8)
+# fit <- rpart(frmla, method="class", data=raw.orig)
+# printcp(fit)
+# plotcp(fit)
+# summary(fit)
+# plot(fit, uniform=TRUE, main="Classification Tree for Chemicals")
+# text(fit, use.n=TRUE, all=TRUE, cex=.8)
 
-tr = tree(frmla, data=raw.orig)
-summary(tr)
-plot(tr); text(tr)
+# tr = tree(frmla, data=raw.orig)
+# summary(tr)
+# plot(tr); text(tr)
 
 
