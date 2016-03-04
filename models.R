@@ -11,9 +11,9 @@ library(caret)
 
 raw.orig <- read.csv('Data/result.csv')
 
-x <- subset(raw.orig, select=-c(total,Unnamed..0.1))
-y <- raw.orig$total
-y<-discretize( y, method='frequency',categories = 5 )
+# x <- subset(raw.orig, select=-c(total,Unnamed..0.1))
+# y <- raw.orig$total
+# y<-discretize( y, method='frequency',categories = 5 )
 
 
 model <- train(x,y,'nb',trControl=trainControl(method='cv',number=10))
