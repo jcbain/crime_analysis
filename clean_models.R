@@ -6,11 +6,25 @@ library(party)
 library(klaR)
 library(caret)
 
-df <- read.csv('Data/output_data/result.csv')
-df <- subset( df, select = -c(Unnamed..0,Unnamed..0.1) )
+#####################
+## NAIVE BAYES !!! ##
+#####################
 
-x <- subset(df, select = -total)
-y <- round(df$total, digits = -1)
+## read in csv file ##
+df <- read.csv('Data/output_data/result.csv')
+df <- subset( df, select = -c(Unnamed..0,Unnamed..0.1) ) # clean up residual index rows
+
+## define training set and target ##
+x <- subset(df, select = -c(1:9,total)) # define training set 
+y <- as.factor(round(df$total, digits = -1)) # define target, discretize 
+
+## train your model ##
+model <- train(x,y,'nb',trControl=trainControl(method='cv',number=10)) 
+
+predict(model$finalModel,x) 
+predict(model$finalModel,x)$class
+
+table(predict(model$finalModel,x)$class,y)
 
 #################
 # decision tree #
