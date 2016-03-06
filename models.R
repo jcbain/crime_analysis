@@ -7,6 +7,13 @@ library(klaR)
 library(caret)
 library(reshape2)
 
+####################################### #*#################*# #######################################
+####################################### #*#################*# #######################################
+####################################### #*#### PREDICT ####*# #######################################
+####################################### #*#### SESSION ####*# #######################################
+####################################### #*#################*# #######################################
+####################################### #*#################*# #######################################
+
 ######################
 ## read in the file ##
 ######################
@@ -132,7 +139,7 @@ p5<- ggplot(df, aes(factor(session),mouse_movement, colour = session))
 p6<- ggplot(df, aes(factor(session),keystroke, colour = session)) 
 p7<- ggplot(df, aes(factor(session),time_delta, colour = session))  
 
-
+## boxplots ##
 p1 + geom_boxplot() + theme(legend.position="none") + 
   labs(title = "idle time", x = "session", y = "")
 p2 + geom_boxplot() + theme(legend.position="none") + 
@@ -148,11 +155,10 @@ p6 + geom_boxplot() + theme(legend.position="none") +
 p7 + geom_boxplot() + theme(legend.position="none") + 
   labs(title = "time", x = "session", y = "")
 
-
 ## string plots together ##
 multiplot(p1, p2, p3,p4,p5,p6,p7, cols=7)
 
-
+## plots with variables plotted agains time ##
 p8<- ggplot(df, aes(time_delta,keystroke, colour = session)) 
 p9<- ggplot(df, aes(time_delta,idle_time, colour = session))
 p10<- ggplot(df, aes(time_delta,mouse_wheel, colour = session))
@@ -160,6 +166,7 @@ p11<- ggplot(df, aes(time_delta,left_click, colour = session))
 p12<- ggplot(df, aes(time_delta,right_click, colour = session))
 p13<- ggplot(df, aes(time_delta,mouse_movement, colour = session))
 
+## plot 2D density plots ##
 p8 + geom_point() + geom_density2d() + facet_wrap(~session)
 p9 + geom_point() + geom_density2d() + facet_wrap(~session)
 p10 + geom_point() + geom_density2d() + facet_wrap(~session)
@@ -168,4 +175,35 @@ p12 + geom_point() + geom_density2d() + facet_wrap(~session)
 p13 + geom_point() + geom_density2d() + facet_wrap(~session)
 
 
+####################################### #*#################*# #######################################
+####################################### #*#################*# #######################################
+####################################### #*#### PREDICT ####*# #######################################
+####################################### #*#### GRADES  ####*# #######################################
+####################################### #*#################*# #######################################
+####################################### #*#################*# #######################################
 
+
+#####################
+## NAIVE BAYES !!! ##
+#####################
+#*******************#
+
+mround <- function(x,base){ 
+  base*round(x/base) 
+} 
+
+## read in csv file ##
+df2 <- read.csv('Data/output_data/final_grades.csv')
+df2 <- subset(df2, select = -X ) # clean up residual index rows
+df2 <- na.omit(df2)
+
+x <- subset(df2, select = -total) # define training set 
+y <- as.factor(mround(df2$total,10))
+
+## train your model ##
+model <- train(x,y,'nb',trControl=trainControl(method='cv',number=10)) 
+
+predict(model$finalModel,x) 
+predict(model$finalModel,x)$class
+
+table(predict(model$finalModel,x)$class,y)
