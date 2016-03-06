@@ -211,3 +211,25 @@ predict(model$finalModel,x)
 predict(model$finalModel,x)$class
 
 table(predict(model$finalModel,x)$class,y)
+
+#################
+# decision tree #
+#################
+
+## model ##
+fit <- rpart(total ~ ., df2)
+summary(fit)
+
+
+## plot decision tree ##
+tr = tree(fit, data=df2)
+summary(tr)
+plot(tr); text(tr)
+
+#######################
+## LINEAR REGRESSION ##
+#######################
+linM<- lm(df2$total~df2$es_6_2_15points+df2$es_5_2_10points+df2$es_4_1_15points+df2$es_3_3_2points)
+summary(linM)
+plot(df2$es_6_2_15points,df2$total)
+plot(linM)
