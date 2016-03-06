@@ -1,4 +1,4 @@
-setwd(dir='Desktop/Spring 2016/CS 7001/Project_1/part_1/EPM Dataset 2/')
+setwd(dir='Desktop/Spring 2016/CS 7001/Project_1/part_1/EPM_Dataset/')
 
 library(rpart)
 library(tree)
@@ -22,12 +22,12 @@ df<-subset(df,select=-c(1,2,4,5)) # take out the dumb columns/ the columns that 
 #df<-subset(df,select=-c(1,2,4,5,9)) # subset out time_delta feature
 df<-na.omit(df) # omit na's from the file
 df<-df[-df$idle_time < 5000,] # remove an extreme outlier in idle time
-df$session[df$session == 1] <- 'one' # ugly way of doing this/ also not necessary
-df$session[df$session == 2] <- 'two'
-df$session[df$session == 3] <- 'three'
-df$session[df$session == 4] <- 'four'
-df$session[df$session == 5] <- 'five'
-df$session[df$session == 6] <- 'six'
+#df$session[df$session == 1] <- 'one' # ugly way of doing this/ also not necessary
+#df$session[df$session == 2] <- 'two'
+#df$session[df$session == 3] <- 'three'
+#df$session[df$session == 4] <- 'four'
+#df$session[df$session == 5] <- 'five'
+#df$session[df$session == 6] <- 'six'
 
 df$session<-as.factor(df$session) # make sure that you factorize the target
 
@@ -173,6 +173,10 @@ p10 + geom_point() + geom_density2d() + facet_wrap(~session)
 p11 + geom_point() + geom_density2d() + facet_wrap(~session)
 p12 + geom_point() + geom_density2d() + facet_wrap(~session)
 p13 + geom_point() + geom_density2d() + facet_wrap(~session)
+
+## scatters ##
+# https://en.wikibooks.org/wiki/Data_Mining_Algorithms_In_R/Classification/Na%C3%AFve_Bayes
+pairs(df[2:5],pch=21,bg=c("red","green3","blue")[unclass(df$session)])
 
 
 ####################################### #*#################*# #######################################
