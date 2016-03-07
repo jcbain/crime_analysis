@@ -222,7 +222,7 @@ predict(model$finalModel,x)$class
 table(predict(model$finalModel,x)$class,y)
 
 ## scatter plots ##
-p21<- ggplot(df2, aes(x=es_6_1_25points,y=total)) + geom_point(aes(colour=rounded)) +
+p21<- ggplot(df2, aes(x=es_6_2_15points,y=total)) + geom_point(aes(colour=rounded)) +
   labs(x = 'section 6.2', colour = 'rounded totals')
 p22<- ggplot(df2, aes(x=es_5_2_10points,y=total)) + geom_point(aes(colour=rounded)) +
   labs(x = 'section 5.2', colour = 'rounded totals')
