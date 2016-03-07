@@ -6,6 +6,7 @@ library(party)
 library(klaR)
 library(caret)
 library(reshape2)
+library(GGally)
 
 ####################################### #*#################*# #######################################
 ####################################### #*#################*# #######################################
@@ -205,6 +206,7 @@ mround <- function(x,base){
 
 ## read in csv file ##
 df2 <- read.csv('Data/output_data/final_grades.csv')
+df2$rounded<- as.factor(mround(df2$total,10))
 df2 <- subset(df2, select = -X ) # clean up residual index rows
 df2 <- na.omit(df2)
 
@@ -218,6 +220,18 @@ predict(model$finalModel,x)
 predict(model$finalModel,x)$class
 
 table(predict(model$finalModel,x)$class,y)
+
+## scatter plots ##
+p21<- ggplot(df2, aes(x=es_6_1_25points,y=total)) + geom_point(aes(colour=rounded)) +
+  labs(x = 'section 6.2', colour = 'rounded totals')
+p22<- ggplot(df2, aes(x=es_5_2_10points,y=total)) + geom_point(aes(colour=rounded)) +
+  labs(x = 'section 5.2', colour = 'rounded totals')
+p23<- ggplot(df2, aes(x=es_4_1_15points,y=total)) + geom_point(aes(colour=rounded)) +
+  labs(x = 'section 4.1', colour = 'rounded totals')
+p24<- ggplot(df2, aes(x=es_3_3_2points,y=total)) + geom_point(aes(colour=rounded)) +
+  labs(x = 'section 3.3', colour = 'rounded totals')
+
+multiplot(p21,p22,p23,p24, cols=2)
 
 #################
 # decision tree #
