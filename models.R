@@ -238,6 +238,7 @@ multiplot(p21,p22,p23,p24, cols=2)
 #################
 
 ## model ##
+df2 <- read.csv('Data/output_data/final_grades.csv')
 fit <- rpart(total ~ ., df2)
 summary(fit)
 
@@ -252,5 +253,17 @@ plot(tr); text(tr)
 #######################
 linM<- lm(df2$total~df2$es_6_2_15points+df2$es_5_2_10points+df2$es_4_1_15points+df2$es_3_3_2points)
 summary(linM)
-plot(df2$es_6_2_15points,df2$total)
-plot(linM)
+
+## add fitted values to dataframe ##
+df2$fitted<-linM$fitted.values
+
+## define a function ##
+fun1 <-  function(x){
+  10.8847 + (x*2.4959) + (mean(df2$es_5_2_10points)*1.5899) +
+    (mean(df2$es_4_1_15points)*1.7154) + (mean(df2$es_3_3_2points)*2.7065 )
+}
+
+## plot with function ##
+ggplot(df2, aes(x=es_6_2_15points,y=fitted)) + geom_point() +stat_function(fun = fun1)
+
+
