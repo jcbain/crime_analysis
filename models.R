@@ -40,7 +40,7 @@ df$session<-as.factor(df$session) # make sure that you factorize the target
 ######################################
 ## define training and testing sets ##
 ######################################
-sub<-sample(nrow(df),floor(nrow(df)*0.9)) # training data is 90% of all data (random rows)
+sub<-sample(nrow(df),floor(nrow(df)*0.5)) # training data is 50% of all data (random rows)
 train<- df[sub,] # define training data from the sub
 test<- df[-sub,] # define the testing data from the rest
 
@@ -59,6 +59,12 @@ model <- train(xTrain,yTrain,'nb',trControl=trainControl(method='cv',number=10))
 ## see how model performs on testing data ##
 ############################################
 prop.table(table(predict(model$finalModel,xTest)$class,yTest))
+
+preds<- predict(model$finalModel,xTest)$class 
+reals<- yTest
+
+vals<-cbind(preds,reals)
+vals<-data.frame(vals)
 
 ####################
 ## DECISION TREES ##
@@ -140,43 +146,44 @@ p6<- ggplot(df, aes(factor(session),keystroke, colour = session))
 p7<- ggplot(df, aes(factor(session),time_delta, colour = session))  
 
 ## boxplots ##
-p1 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "idle time", x = "session", y = "")
-p2 + geom_boxplot() + theme(legend.position="none") + 
+p1<-p1 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "idle time", x = "session", y = "") + coord_cartesian(ylim= c(18300,10000000))
+p2<-p2 + geom_boxplot() + theme(legend.position="none") + 
   labs(title = "right click", x = "session", y = "")
-p3 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "left click", x = "session", y = "")
-p4 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "mouse wheel", x = "session", y = "")
-p5 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "mouse movement", x = "session", y = "")
-p6 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "keystroke", x = "session", y = "")
-p7 + geom_boxplot() + theme(legend.position="none") + 
-  labs(title = "time", x = "session", y = "")
+p3<-p3 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "left click", x = "session", y = "") + coord_cartesian(ylim= c(0,25))
+p4<-p4 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "mouse wheel", x = "session", y = "") + coord_cartesian(ylim= c(0,30))
+p5<-p5 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "mouse movement", x = "session", y = "") + coord_cartesian(ylim= c(0,1700))
+p6<-p6 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "keystroke", x = "session", y = "") + coord_cartesian(ylim= c(0,40))
+p7<-p7 + geom_boxplot() + theme(legend.position="none") + 
+  labs(title = "time", x = "session", y = "") + coord_cartesian(ylim= c(0,90))
 
 ## string plots together ##
-multiplot(p1, p2, p3,p4,p5,p6,p7, cols=7)
+multiplot(p6,p3,p7 ,p2, p1,p4,p5, cols=7)
 
 ## plots with variables plotted agains time ##
-p8<- ggplot(df, aes(time_delta,keystroke, colour = session)) 
-p9<- ggplot(df, aes(time_delta,idle_time, colour = session))
-p10<- ggplot(df, aes(time_delta,mouse_wheel, colour = session))
-p11<- ggplot(df, aes(time_delta,left_click, colour = session))
-p12<- ggplot(df, aes(time_delta,right_click, colour = session))
-p13<- ggplot(df, aes(time_delta,mouse_movement, colour = session))
+p8<- ggplot(df, aes(keystroke, colour = session)) 
+p9<- ggplot(df, aes(idle_time, colour = session))
+p10<- ggplot(df, aes(mouse_wheel, colour = session))
+p11<- ggplot(df, aes(left_click, colour = session))
+p12<- ggplot(df, aes(right_click, colour = session))
+p13<- ggplot(df, aes(mouse_movement, colour = session))
 
 ## plot 2D density plots ##
-p8 + geom_point() + geom_density2d() + facet_wrap(~session)
-p9 + geom_point() + geom_density2d() + facet_wrap(~session)
-p10 + geom_point() + geom_density2d() + facet_wrap(~session)
-p11 + geom_point() + geom_density2d() + facet_wrap(~session)
-p12 + geom_point() + geom_density2d() + facet_wrap(~session)
-p13 + geom_point() + geom_density2d() + facet_wrap(~session)
+p8 +  geom_density() + facet_wrap(~session)
+p9 +  geom_density() + facet_wrap(~session)
+p10 +  geom_density() + facet_wrap(~session)
+p11 +  geom_density() + facet_wrap(~session)
+p12 +  geom_density() + facet_wrap(~session)
+p13 +  geom_density() + facet_wrap(~session)
+
 
 ## scatters ##
 # https://en.wikibooks.org/wiki/Data_Mining_Algorithms_In_R/Classification/Na%C3%AFve_Bayes
-pairs(df[2:5],pch=21,bg=c("red","green3","blue")[unclass(df$session)])
+pairs(df[2:5],pch=21,bg=c("red","green3","blue","yellow","purple")[unclass(df$session)])
 
 
 ####################################### #*#################*# #######################################
@@ -201,7 +208,7 @@ df2 <- read.csv('Data/output_data/final_grades.csv')
 df2 <- subset(df2, select = -X ) # clean up residual index rows
 df2 <- na.omit(df2)
 
-x <- subset(df2, select = -total) # define training set 
+x <- subset(df2, select = c(es_6_1_25points,es_5_2_10points, es_4_1_15points,es_3_3_2points) ) # define training set 
 y <- as.factor(mround(df2$total,10))
 
 ## train your model ##
