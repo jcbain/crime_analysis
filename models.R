@@ -267,3 +267,25 @@ fun1 <-  function(x){
 ggplot(df2, aes(x=es_6_2_15points,y=fitted)) + geom_point() +stat_function(fun = fun1)
 
 
+
+######################
+## SUPP VECTOR MACH ##
+######################
+#********************#
+
+## create a function to round ##
+mround <- function(x,base){ 
+  base*round(x/base) 
+} 
+
+## read in csv file ##
+df2 <- read.csv('Data/output_data/final_grades.csv')
+df2$total <- as.factor(mround(df2$total,50)) # round by 50 
+df2 <- subset(df2, select = -X ) # clean up residual index rows
+df2 <- na.omit(df2)
+
+## predict on every damn thing in the dataframe ##
+model <- svm(total~.,data = df2)
+
+## plot on two independent variables ## 
+plot(model, df2, es_5_2_10points~es_6_2_15points)
